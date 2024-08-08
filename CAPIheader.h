@@ -1,15 +1,26 @@
+
 #pragma once
 #ifndef CAPIHEADER_H
 #define CAPIHEADER_H
 
-#include <iostream>  
+#define CURL_STATICLIB
+#define HTTP_ONLY
+
+#include <iostream>
+#include <windows.h> 
 #include <fstream>  
 #include <curl/curl.h>  
 #include <mmsystem.h>  
 #include <filesystem> // C++17 或更高版本  
+#include <unordered_map> 
+#include <errno.h>
 
 #pragma comment(lib, "winmm.lib")  
 #pragma comment(lib, "libcurl_a.lib") // 确保链接了libcurl库  
+
+std::string get(std::string url, bool download = false, std::string filepath = "C:\\music\\music.wav", std::string path = "C:\\music");
+std::string post(const std::string& baseUrl, const std::unordered_map<std::string, std::string>& params, bool saveToFile = false, const std::string& filePath = "");
+
 
 // 函数用于将 UTF-8 编码的 std::string 转换为 std::wstring（UTF-16）  
 static std::wstring utf8ToWide(const std::string& utf8) {
@@ -31,9 +42,9 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, std::ofstream* st
 }
 
 //使用 libcurl 来下载文件并将其保存到指定的路径
-static void download_file(const std::string& url, const std::string& filepath) {
-    CURL* curl;
-    CURLcode res;
+static CURLcode download_file(const std::string& url, const std::string& filepath) {
+    CURL* curl; 
+    CURLcode res= CURLE_FAILED_INIT;
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
@@ -43,7 +54,7 @@ static void download_file(const std::string& url, const std::string& filepath) {
             std::cerr << "Failed to open file for writing: " << filepath << std::endl;
             curl_easy_cleanup(curl);
             curl_global_cleanup();
-            return;
+            return CURLE_WRITE_ERROR;
         }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -53,13 +64,15 @@ static void download_file(const std::string& url, const std::string& filepath) {
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            //std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            return res;
         }
 
         ofs.close();
         curl_easy_cleanup(curl);
     }
     curl_global_cleanup();
+    return res;
 }
 
 //使用 MCI (Media Control Interface) 命令来播放 WAV 文件

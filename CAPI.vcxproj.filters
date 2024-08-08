@@ -18,9 +18,30 @@
     <ClCompile Include="CAPI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="post.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="get.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="progress_bar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CAPIheader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerStdOut.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="progress_bar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="urlbase.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
